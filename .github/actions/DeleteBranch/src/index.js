@@ -10,7 +10,7 @@ const github = require('@actions/github');
             } = github;
 
         console.log('repository', repository);
-            const { data } = await github.getOctokit(process.env.GITHUB_TOKEN).request(`${repository.url}/releases`);
+            const { data } = await github.getOctokit(process.env.GITHUB_TOKEN).request(`${repository.url}/branches`);
 
             // const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
         // console.log('----->>>',myToken)
