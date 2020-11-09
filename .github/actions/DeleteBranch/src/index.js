@@ -13,20 +13,42 @@ const github = require('@actions/github');
             repo: name,
             protected: false,
         }).then(({ data }) => {
-            for (let branch of data) {
-                octokit.repos.getBranch({
-                    owner: owner.name,
-                    repo: name,
-                    branch: branch.name,
-                }).then(({ data }) => {
+            const branchInfoList = [];
+            data.forEach((branch) => {
+                branchInfoList.push(
+                    octokit.repos.getBranch({
+                        owner: owner.name,
+                        repo: name,
+                        branch: branch.name,
+                    })
+                )
+            });
+            Promise.all(branchInfoList).then((list) => {
+                list = list.map(({ data }) => {
                     const { name, commit: { commit: { author, committer}} } = data;
-                    console.log(JSON.stringify({
+                    return ({
                         name,
                         author,
                         committer
-                    }, null, 2))
-                })
-            }
+                    })
+                });
+
+                console.log(JSON.stringify(list, null, 2));
+            })
+            // for (let branch of data) {
+            //     octokit.repos.getBranch({
+            //         owner: owner.name,
+            //         repo: name,
+            //         branch: branch.name,
+            //     }).then(({ data }) => {
+            //         const { name, commit: { commit: { author, committer}} } = data;
+            //         console.log(JSON.stringify({
+            //             name,
+            //             author,
+            //             committer
+            //         }, null, 2))
+            //     })
+            // }
         })
     } catch (error) {
         core.setFailed(error.message);
