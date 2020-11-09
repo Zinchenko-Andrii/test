@@ -7,8 +7,14 @@ const github = require('@actions/github');
         const defaultCreds = { owner: owner.name, repo: name };
         const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
 
-        console.log(JSON.stringify(octokit, null, 2))
+        // console.log(JSON.stringify(octokit, null, 2))
 
+        const res = await octokit.git.deleteRef({
+            ...github.context.repo,
+            ref: "heads/12"
+        })
+
+        console.log(JSON.stringify(res));
         // const getBranchList = (list) => list.reduce((acc, { name }) => (
         //     [
         //         ...acc,
