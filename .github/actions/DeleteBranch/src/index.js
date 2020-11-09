@@ -7,30 +7,32 @@ const github = require('@actions/github');
         const defaultCreds = { owner: owner.name, repo: name };
         const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
 
-        const getBranch = (name) => (octokit.repos.getBranch({
-            ...defaultCreds,
-            branch: name,
-        }))
+        console.log(JSON.stringify(octokit.git, null, 2))
 
-        octokit.repos.listBranches({ ...defaultCreds, protected: false,})
-            .then(({ data }) => {
-                const branchInfoList = data.reduce((acc, { name }) => (
-                    [...acc, getBranch(name)]
-                ), []);
-
-                Promise.all(branchInfoList).then((list) => {
-                    list = list.map(({ data }) => {
-                        const { name, commit: { commit: { author, committer}} } = data;
-                        return ({
-                            name,
-                            author,
-                            committer
-                        })
-                    });
-
-                    console.log(JSON.stringify(list, null, 2));
-                })
-            })
+        // const getBranchList = (list) => list.reduce((acc, { name }) => (
+        //     [
+        //         ...acc,
+        //         octokit.repos.getBranch({
+        //             ...defaultCreds,
+        //             branch: name,
+        //         }),
+        //     ]
+        // ), [])
+        //
+        // octokit.repos.listBranches({ ...defaultCreds, protected: false,})
+        //     .then(({ data }) => {
+        //
+        //         Promise.all(
+        //             getBranchList(data)
+        //         ).then((list) => {
+        //             const branches = list.reduce((acc, { data }) => {
+        //                 const { name, commit: { commit: { author, committer}} } = data;
+        //                 return ([ ...acc, { name, author, committer } ])
+        //             }, [])
+        //
+        //             console.log(JSON.stringify(branches, null, 2));
+        //         })
+        //     })
     } catch (error) {
         core.setFailed(error.message);
     }
