@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: console log the github context
-        uses: ./.github/actions/deleteBranch
+        uses: ./.github/actions/DeleteBranch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL_AS_FRONT }}
