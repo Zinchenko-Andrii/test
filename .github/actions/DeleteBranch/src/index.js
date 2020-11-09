@@ -3,8 +3,8 @@ const github = require('@actions/github');
 
 (async () => {
     try {
-        const myToken = core.getInput('myToken');
-        const octokit = github.getOctokit(myToken)
+        const myToken = core.getInput('${{ secrets.GITHUB_TOKEN }}');
+        // const octokit = github.getOctokit(myToken)
         console.log('----->>>',myToken)
         console.log('----->>>',octokit)
     } catch (error) {
