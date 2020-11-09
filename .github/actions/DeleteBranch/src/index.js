@@ -17,12 +17,12 @@ const github = require('@actions/github');
          console.log('----->>>', JSON.stringify(data, null, 2))
 
         for (let branch in data) {
-            let branch = await octokit.repos.getBranch({
+            let info = await octokit.repos.getBranch({
                 owner: owner.name,
                 repo: name,
                 branch: branch.name,
             })
-            console.log('!!!!', branch);
+            console.log('!!!!', info);
         }
 
     } catch (error) {
