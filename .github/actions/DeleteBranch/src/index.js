@@ -3,53 +3,34 @@ const github = require('@actions/github');
 
 (async () => {
     try {
-
         const { name, owner } = github.context.payload.repository;
+        const defaultCreds = { owner: owner.name, repo: name };
+        const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
 
-        const octokit = github.getOctokit(process.env.GITHUB_TOKEN,)
+        const getBranch = (name) => (octokit.repos.getBranch({
+            ...defaultCreds,
+            branch: name,
+        }))
 
-        octokit.repos.listBranches({
-            owner: owner.name,
-            repo: name,
-            protected: false,
-        }).then(({ data }) => {
-            const branchInfoList = [];
-            data.forEach((branch) => {
-                branchInfoList.push(
-                    octokit.repos.getBranch({
-                        owner: owner.name,
-                        repo: name,
-                        branch: branch.name,
-                    })
-                )
-            });
-            Promise.all(branchInfoList).then((list) => {
-                list = list.map(({ data }) => {
-                    const { name, commit: { commit: { author, committer}} } = data;
-                    return ({
-                        name,
-                        author,
-                        committer
-                    })
-                });
+        octokit.repos.listBranches({ ...defaultCreds, protected: false,})
+            .then(({ data }) => {
+                const branchInfoList = data.reduce((acc, { name }) => (
+                    [...acc, branchInfoList.push(getBranch(name))]
+                ), []);
 
-                console.log(JSON.stringify(list, null, 2));
+                Promise.all(branchInfoList).then((list) => {
+                    list = list.map(({ data }) => {
+                        const { name, commit: { commit: { author, committer}} } = data;
+                        return ({
+                            name,
+                            author,
+                            committer
+                        })
+                    });
+
+                    console.log(JSON.stringify(list, null, 2));
+                })
             })
-            // for (let branch of data) {
-            //     octokit.repos.getBranch({
-            //         owner: owner.name,
-            //         repo: name,
-            //         branch: branch.name,
-            //     }).then(({ data }) => {
-            //         const { name, commit: { commit: { author, committer}} } = data;
-            //         console.log(JSON.stringify({
-            //             name,
-            //             author,
-            //             committer
-            //         }, null, 2))
-            //     })
-            // }
-        })
     } catch (error) {
         core.setFailed(error.message);
     }
