@@ -1,9 +1,32 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
+class API {
+    constructor(octokit) {
+        const { name, owner } = github.context.payload.repository;
+
+        this.octokit = octokit;
+        this.defaultCreds = { owner: owner.name, repo: name };
+    }
+
+    getBranchList(list) {
+        return list.reduce((acc, { name }) => (
+            [
+                ...acc,
+                this.octokit.repos.getBranch({
+                    ...this.defaultCreds,
+                    branch: name,
+                }),
+            ]
+        ), [])
+    }
+}
+
 (async () => {
     try {
         const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+
+        const api = new API(octokit);
 
         const { name, owner } = github.context.payload.repository;
         const defaultCreds = { owner: owner.name, repo: name };
@@ -28,7 +51,7 @@ const github = require('@actions/github');
         octokit.repos.listBranches({ ...defaultCreds, protected: false,})
             .then(({ data }) => {
                 Promise.all(
-                    getBranchList(data)
+                    api.getBranchList(data)
                 ).then((list) => {
                     const branches = list.reduce((acc, { data }) => {
                         const { name, commit: { commit: { author, committer}} } = data;
