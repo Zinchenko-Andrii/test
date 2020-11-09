@@ -1,30 +1,30 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-
-const { name, owner } = github.context.payload.repository;
-const defaultCreds = { owner: owner.name, repo: name };
-
-const deleteBranch = (name) => (
-    octokit.git.deleteRef({
-        ...github.context.repo,
-        ref: `heads/${name}`
-    })
-)
-
-const getBranchList = (list) => list.reduce((acc, { name }) => (
-    [
-        ...acc,
-        octokit.repos.getBranch({
-            ...defaultCreds,
-            branch: name,
-        }),
-    ]
-), [])
-
 (async () => {
     try {
+        const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+
+        const { name, owner } = github.context.payload.repository;
+        const defaultCreds = { owner: owner.name, repo: name };
+
+        const deleteBranch = (name) => (
+            octokit.git.deleteRef({
+                ...github.context.repo,
+                ref: `heads/${name}`
+            })
+        )
+
+        const getBranchList = (list) => list.reduce((acc, { name }) => (
+            [
+                ...acc,
+                octokit.repos.getBranch({
+                    ...defaultCreds,
+                    branch: name,
+                }),
+            ]
+        ), [])
+
         octokit.repos.listBranches({ ...defaultCreds, protected: false,})
             .then(({ data }) => {
                 Promise.all(
