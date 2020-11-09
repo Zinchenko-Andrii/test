@@ -14,18 +14,18 @@ const github = require('@actions/github');
             protected: false,
         });
 
-         console.log('----->>>', JSON.stringify(data, null, 2))
+         // console.log('----->>>', JSON.stringify(data, null, 2))
 
         for (let branch of data) {
-            console.log('--',  branch.name)
+            let info = await octokit.repos.getBranch({
+                owner: owner.name,
+                repo: name,
+                branch: branch.name,
+            })
+            console.log('!!!!', info);
         }
 
-        // let info = await octokit.repos.getBranch({
-        //     owner: owner.name,
-        //     repo: name,
-        //     branch: '12',
-        // })
-        // console.log('!!!!', info);
+
 
     } catch (error) {
         core.setFailed(error.message);
