@@ -15,7 +15,7 @@ const github = require('@actions/github');
         octokit.repos.listBranches({ ...defaultCreds, protected: false,})
             .then(({ data }) => {
                 const branchInfoList = data.reduce((acc, { name }) => (
-                    [...acc, branchInfoList.push(getBranch(name))]
+                    [...acc, getBranch(name)]
                 ), []);
 
                 Promise.all(branchInfoList).then((list) => {
