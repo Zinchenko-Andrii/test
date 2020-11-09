@@ -9,15 +9,27 @@ class API {
         this.defaultCreds = { owner: owner.name, repo: name };
     }
 
+    deleteBranch(name) {
+        return (
+            this.octokit.git.deleteRef({
+                ...github.context.repo,
+                ref: `heads/${name}`
+            })
+        )
+    }
+
+    getBranch(name) {
+        return (
+            this.octokit.repos.getBranch({
+                ...this.defaultCreds,
+                branch: name,
+            })
+        )
+    }
+
     getBranchList(list) {
         return list.reduce((acc, { name }) => (
-            [
-                ...acc,
-                this.octokit.repos.getBranch({
-                    ...this.defaultCreds,
-                    branch: name,
-                }),
-            ]
+            [ ...acc, this.getBranch(name) ]
         ), [])
     }
 }
@@ -30,23 +42,6 @@ class API {
 
         const { name, owner } = github.context.payload.repository;
         const defaultCreds = { owner: owner.name, repo: name };
-
-        const deleteBranch = (name) => (
-            octokit.git.deleteRef({
-                ...github.context.repo,
-                ref: `heads/${name}`
-            })
-        )
-
-        const getBranchList = (list) => list.reduce((acc, { name }) => (
-            [
-                ...acc,
-                octokit.repos.getBranch({
-                    ...defaultCreds,
-                    branch: name,
-                }),
-            ]
-        ), [])
 
         octokit.repos.listBranches({ ...defaultCreds, protected: false,})
             .then(({ data }) => {
