@@ -8,25 +8,21 @@ const github = require('@actions/github');
 
         const octokit = github.getOctokit(process.env.GITHUB_TOKEN,)
 
-        const { data } = await octokit.repos.listBranches({
+        octokit.repos.listBranches({
             owner: owner.name,
             repo: name,
             protected: false,
-        });
-
-         // console.log('----->>>', JSON.stringify(data, null, 2))
-
-        for (let branch of data) {
-            let info = await octokit.repos.getBranch({
-                owner: owner.name,
-                repo: name,
-                branch: branch.name,
-            })
-            console.log('!!!!', info);
-        }
-
-
-
+        }).then(({ data }) => {
+            for (let branch of data) {
+                octokit.repos.getBranch({
+                    owner: owner.name,
+                    repo: name,
+                    branch: branch.name,
+                }).then(({ data }) => {
+                    console.log(JSON.stringify(data, null, 2))
+                })
+            }
+        })
     } catch (error) {
         core.setFailed(error.message);
     }
