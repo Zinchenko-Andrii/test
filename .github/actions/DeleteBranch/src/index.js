@@ -12,6 +12,6 @@ const github = require('@actions/github');
         console.log('----->>>', responce)
 
     } catch (error) {
-        core.setFailed(error.message);
+        console.log('error ->>>', error)
     }
 })()
