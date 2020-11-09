@@ -16,9 +16,8 @@ const github = require('@actions/github');
 
          console.log('----->>>', JSON.stringify(data, null, 2))
 
-        for (let branch in data) {
-            console.log('--', branch)
-            console.log('--', data[branch].name)
+        for (let branch of data) {
+            console.log('--',  branch.name)
         }
 
         // let info = await octokit.repos.getBranch({
