@@ -14,5 +14,5 @@ jobs:
       - name: console log the github context
         uses: ./.github/actions/DeleteBranch
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MYTOKEN }}
           SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL_AS_FRONT }}
