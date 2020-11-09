@@ -1,0 +1,10 @@
+name: 'ReleaseNotification'
+description: 'Send the message to the Slack channel when PR with release label and have prerelease tag is closed'
+inputs:
+  label:
+    description: 'Label for check in the github event (string type)'
+    required: false
+    default: 'release'
+runs:
+  using: 'node12'
+  main: 'src/index.js'

@@ -1,0 +1,16 @@
+{
+  "name": "@airslate/platform-delete-branch",
+  "version": "1.0.0",
+  "private": true,
+  "keywords": [],
+  "author": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/airslateinc/front-platform.git"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "4.0.0"
+  }
+}

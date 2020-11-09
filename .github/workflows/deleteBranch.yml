@@ -1,0 +1,18 @@
+name: DeleteBranch
+
+on:
+  push:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: 'Runner'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: console log the github context
+        uses: ./.github/actions/deleteBranch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL_AS_FRONT }}
