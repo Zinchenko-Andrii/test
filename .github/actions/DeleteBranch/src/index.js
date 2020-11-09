@@ -8,6 +8,7 @@ const github = require('@actions/github');
                         payload: { repository },
                 },
         } = github;
+        console.log('process.env.GITHUB_TOKEN', process.env.GITHUB_TOKEN);
         const responce = await github.getOctokit(process.env.GITHUB_TOKEN).request(`${repository.url}/branches`);
         console.log('----->>>', responce)
 
