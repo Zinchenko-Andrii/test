@@ -5,14 +5,13 @@ const github = require('@actions/github');
     try {
         const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
         // console.log('----->>>',myToken)
-        console.log('----->>>',JSON.stringify(github, null, 2))
         // console.log('----->>>',JSON.stringify(Object.keys(octokit), null, 2))
-        // const data = await octokit.repos.listBranches({
-        //     owner:,
-        //     repo:,
-        // });
+        const data = await octokit.repos.listBranches({
+            owner: 'Zinchenko-Andrii',
+            repo: 'test',
+        });
         //
-        // console.log('----->>>',JSON.stringify(data, null, 2))
+        console.log('----->>>',JSON.stringify(data, null, 2))
 
     } catch (error) {
         core.setFailed(error.message);
