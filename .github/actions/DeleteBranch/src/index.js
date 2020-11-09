@@ -4,7 +4,7 @@ const github = require('@actions/github');
 (async () => {
     try {
         // const responce = await github.getOctokit(process.env.GITHUB_TOKEN).request(`${repository.url}/branches`);
-        console.log('----->>>', github)
+        console.log('----->>>', JSON.stringify(github.payload.repository))
 
             const octokit = github.getOctokit(process.env.GITHUB_TOKEN)
         const { data } = await octokit.repos.listBranches({
