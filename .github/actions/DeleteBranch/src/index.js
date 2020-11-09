@@ -19,7 +19,12 @@ const github = require('@actions/github');
                     repo: name,
                     branch: branch.name,
                 }).then(({ data }) => {
-                    console.log(JSON.stringify(data, null, 2))
+                    const { name, commit: { commit: { author, committer}} } = data;
+                    console.log(JSON.stringify({
+                        name,
+                        author,
+                        committer
+                    }, null, 2))
                 })
             }
         })
