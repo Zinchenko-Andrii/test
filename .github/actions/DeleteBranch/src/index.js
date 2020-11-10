@@ -74,15 +74,7 @@ class API {
                 console.log(JSON.stringify(branches, null, 2));
 
                 const body = {
-                    blocks: [
-                        {
-                            type: 'section',
-                            text: {
-                                type: 'mrkdwn',
-                                text: `test Message`,
-                            },
-                        },
-                    ],
+                    "text": "Hello, world."
                 };
 
                 const http = new _http.HttpClient();
