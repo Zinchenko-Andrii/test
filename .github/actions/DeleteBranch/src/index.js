@@ -18,6 +18,11 @@ class API {
         )
     }
 
+    getBranchList() {
+        const params = { ...this.defaultCreds, protected: false };
+        return this.octokit.repos.listBranches(params).then(({ data }) => data);
+    }
+
     getBranch(name) {
         return (
             this.octokit.repos.getBranch({
@@ -27,7 +32,7 @@ class API {
         )
     }
 
-    getBranchList(list) {
+    getBranchInfo(list) {
         return list.reduce((acc, { name }) => (
             [ ...acc, this.getBranch(name) ]
         ), [])
@@ -43,19 +48,28 @@ class API {
         const { name, owner } = github.context.payload.repository;
         const defaultCreds = { owner: owner.name, repo: name };
 
-        octokit.repos.listBranches({ ...defaultCreds, protected: false,})
-            .then(({ data }) => {
-                Promise.all(
-                    api.getBranchList(data)
-                ).then((list) => {
-                    const branches = list.reduce((acc, { data }) => {
-                        const { name, commit: { commit: { author, committer}} } = data;
-                        return ([ ...acc, { name, author, committer } ])
-                    }, [])
+        // const branchList = api.getBranchList();
 
-                    console.log(JSON.stringify(branches, null, 2));
-                })
-            })
+        const data = await octokit.gists.createComment({
+            gist_id: '123',
+            body: 'test message',
+        });
+
+        console.log('--->>', data);
+
+        // octokit.repos.listBranches({ ...defaultCreds, protected: false,})
+        //     .then(({ data }) => {
+        //         Promise.all(
+        //             api.getBranchInfo(data)
+        //         ).then((list) => {
+        //             const branches = list.reduce((acc, { data }) => {
+        //                 const { name, commit: { commit: { author, committer}} } = data;
+        //                 return ([ ...acc, { name, author, committer } ])
+        //             }, [])
+        //
+        //             console.log(JSON.stringify(branches, null, 2));
+        //         })
+        //     })
     } catch (error) {
         core.setFailed(error.message);
     }
