@@ -1,6 +1,15 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
+const checkIsOutDated = (dates) => {
+    // const threeMouthBefore = new Date().setMonth( new Date().getMonth() - 3 );
+    const threeMouthBefore = new Date().setHours( new Date().getHours() - 3 );
+
+    return dates.reduce((isOutDated, date) => (
+        isOutDated || Number(new Date(date)) > threeMouthBefore
+    ), false);
+}
+
 class API {
     constructor() {
         const { name, owner } = github.context.payload.repository;
@@ -23,50 +32,46 @@ class API {
         return this.octokit.repos.listBranches(params).then(({ data }) => data);
     }
 
-    getBranchInfo = (name) => {
-        return (
-            this.octokit.repos.getBranch({
-                ...this.defaultCreds,
-                branch: name,
-            })
-        )
-    }
+    getBranchInfo = (name) => (
+        this.octokit.repos.getBranch({
+            ...this.defaultCreds,
+            branch: name,
+        })
+    )
 
-    getBranchesInfo = (list) => {
-        return Promise.all(
+    getBranchesInfoList = (list) => (
+        Promise.all(
             list.reduce((acc, { name }) => (
                 [ ...acc, this.getBranchInfo(name) ]
             ), [])
         )
-    }
+    )
+
+    parseBranchesList = (list) => (
+        list.reduce((acc, { data }) => {
+            const { name, commit: { commit: { author, committer}} } = data;
+
+            let isOutDated = checkIsOutDated([author.date,committer.date]);
+
+            return ([ ...acc, { name, author, committer, isOutDated } ])
+        }, [])
+    )
+
+    getBranches = () => (
+        this.getBranchList()
+            .then(this.getBranchesInfoList)
+            .then(this.parseBranchesList)
+    )
 }
 
 (async () => {
     try {
         const api = new API();
 
-        api.getBranchList()
-            .then(api.getBranchesInfo)
-            .then((list) => {
-                const branches = list.reduce((acc, { data }) => {
-                    const { name, commit: { commit: { author, committer}} } = data;
-                    return ([ ...acc, { name, author, committer } ])
-                }, [])
-
+        api.getBranches().then((branches) => {
                 console.log(JSON.stringify(branches, null, 2));
             })
 
-        // octokit.repos.listBranches({ ...defaultCreds, protected: false,})
-        //     .then(({ data }) => {
-        //         api.getBranchesInfo(data).then((list) => {
-        //             const branches = list.reduce((acc, { data }) => {
-        //                 const { name, commit: { commit: { author, committer}} } = data;
-        //                 return ([ ...acc, { name, author, committer } ])
-        //             }, [])
-        //
-        //             console.log(JSON.stringify(branches, null, 2));
-        //         })
-        //     })
     } catch (error) {
         core.setFailed(error.message);
     }
