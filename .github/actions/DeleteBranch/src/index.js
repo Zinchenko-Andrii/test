@@ -3,7 +3,7 @@ const github = require('@actions/github');
 
 const checkIsOutDated = (dates) => {
     // const threeMouthBefore = new Date().setMonth( new Date().getMonth() - 3 );
-    const threeMouthBefore = new Date().setHours( new Date().getHours() - 3 );
+    const threeMouthBefore = new Date().setDate( new Date().getDay() - 1 );
 
     return dates.reduce((isOutDated, date) => (
         isOutDated || Number(new Date(date)) < threeMouthBefore
