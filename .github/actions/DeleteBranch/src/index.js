@@ -6,7 +6,7 @@ const checkIsOutDated = (dates) => {
     const threeMouthBefore = new Date().setHours( new Date().getHours() - 3 );
 
     return dates.reduce((isOutDated, date) => (
-        isOutDated || Number(new Date(date)) > threeMouthBefore
+        isOutDated || Number(new Date(date)) < threeMouthBefore
     ), false);
 }
 
