@@ -2,10 +2,10 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 class API {
-    constructor(octokit) {
+    constructor() {
         const { name, owner } = github.context.payload.repository;
 
-        this.octokit = octokit;
+        this.octokit = github.getOctokit(process.env.GITHUB_TOKEN);
         this.defaultCreds = { owner: owner.name, repo: name };
     }
 
@@ -23,7 +23,7 @@ class API {
         return this.octokit.repos.listBranches(params).then(({ data }) => data);
     }
 
-    getBranch(name) {
+    getBranchInfo(name) {
         return (
             this.octokit.repos.getBranch({
                 ...this.defaultCreds,
@@ -32,36 +32,33 @@ class API {
         )
     }
 
-    getBranchInfo(list) {
-        return list.reduce((acc, { name }) => (
-            [ ...acc, this.getBranch(name) ]
-        ), [])
+    getBranchesInfo(list) {
+        return Promise.all(
+            list.reduce((acc, { name }) => (
+                [ ...acc, this.getBranchInfo(name) ]
+            ), [])
+        )
     }
 }
 
 (async () => {
     try {
-        const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+        const api = new API();
 
-        const api = new API(octokit);
+        api.getBranchList()
+            .then(api.getBranchesInfo)
+            .then((list) => {
+                const branches = list.reduce((acc, { data }) => {
+                    const { name, commit: { commit: { author, committer}} } = data;
+                    return ([ ...acc, { name, author, committer } ])
+                }, [])
 
-        const { name, owner } = github.context.payload.repository;
-        const defaultCreds = { owner: owner.name, repo: name };
-
-        // const branchList = api.getBranchList();
-
-        const data = await octokit.gists.createComment({
-            gist_id: '123',
-            body: 'test message',
-        });
-
-        console.log('--->>', data);
+                console.log(JSON.stringify(branches, null, 2));
+            })
 
         // octokit.repos.listBranches({ ...defaultCreds, protected: false,})
         //     .then(({ data }) => {
-        //         Promise.all(
-        //             api.getBranchInfo(data)
-        //         ).then((list) => {
+        //         api.getBranchesInfo(data).then((list) => {
         //             const branches = list.reduce((acc, { data }) => {
         //                 const { name, commit: { commit: { author, committer}} } = data;
         //                 return ([ ...acc, { name, author, committer } ])
