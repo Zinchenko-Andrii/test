@@ -1,7 +1,5 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const { WebClient } = require('@slack/web-api');
-
 
 const checkIsOutDated = (dates) => {
     // const threeMouthBefore = new Date().setMonth( new Date().getMonth() - 3 );
@@ -68,51 +66,39 @@ class API {
 
 (async () => {
     try {
-        const token = process.env.SLACK_TOKEN;
+        const api = new API();
 
-        const web = new WebClient(token);
+        api.getBranches().then(async (branches) => {
+                console.log(JSON.stringify(branches, null, 2));
 
+                const body = {
+                    blocks: [
+                        {
+                            type: 'section',
+                            text: {
+                                type: 'mrkdwn',
+                                text: 'List of branch to delete',
+                            },
+                        },
+                    ],
+                };
 
-        const result = await web.chat.postMessage({
-            text: 'Hello world!',
-            channel: '#G01F3JED0TS',
-        });
+                branches.forEach((branch) => {
+                    // if (branch.isOutDated) {
+                    //
+                    // }
+                    body.blocks.push({
+                        type: 'section',
+                        text: {
+                            type: 'mrkdwn',
+                            text: `Branch ${branch.name} will be deleted in 3 days. ${branch.author.name} and ${branch.committer.name} update branch to avoid deletion`,
+                        },
+                    })
+                })
 
-        console.log('--->>', result);
-
-        // const api = new API();
-        //
-        // api.getBranches().then(async (branches) => {
-        //         console.log(JSON.stringify(branches, null, 2));
-        //
-        //         const body = {
-        //             blocks: [
-        //                 {
-        //                     type: 'section',
-        //                     text: {
-        //                         type: 'mrkdwn',
-        //                         text: 'List of branch to delete',
-        //                     },
-        //                 },
-        //             ],
-        //         };
-        //
-        //         branches.forEach((branch) => {
-        //             // if (branch.isOutDated) {
-        //             //
-        //             // }
-        //             body.blocks.push({
-        //                 type: 'section',
-        //                 text: {
-        //                     type: 'mrkdwn',
-        //                     text: `Branch ${branch.name} will be deleted in 3 days. ${branch.author.name} and ${branch.committer.name} update branch to avoid deletion`,
-        //                 },
-        //             })
-        //         })
-        //
-        //         const http = new _http.HttpClient();
-        //         await http.post(process.env.SLACK_HOOK_URL, JSON.stringify(body));
-        //     })
+                const http = new _http.HttpClient();
+                await http.post(process.env.SLACK_HOOK_URL, JSON.stringify(body));
+            })
 
     } catch (error) {
         core.setFailed(error.message);
