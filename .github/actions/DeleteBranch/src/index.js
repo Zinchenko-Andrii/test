@@ -75,7 +75,7 @@ class API {
 
         const result = await web.chat.postMessage({
             text: 'Hello world!',
-            channel: 'G01F3JED0TS',
+            channel: '#G01F3JED0TS',
         });
 
         console.log('--->>', result);
