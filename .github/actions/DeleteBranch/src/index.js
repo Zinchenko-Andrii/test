@@ -18,12 +18,12 @@ class API {
         )
     }
 
-    getBranchList() {
+    getBranchList = () => {
         const params = { ...this.defaultCreds, protected: false };
         return this.octokit.repos.listBranches(params).then(({ data }) => data);
     }
 
-    getBranchInfo(name) {
+    getBranchInfo = (name) => {
         return (
             this.octokit.repos.getBranch({
                 ...this.defaultCreds,
@@ -32,7 +32,7 @@ class API {
         )
     }
 
-    getBranchesInfo(list) {
+    getBranchesInfo = (list) => {
         return Promise.all(
             list.reduce((acc, { name }) => (
                 [ ...acc, this.getBranchInfo(name) ]
