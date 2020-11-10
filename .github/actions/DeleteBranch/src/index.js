@@ -5,7 +5,7 @@ const _http = require('@actions/http-client');
 
 const checkIsOutDated = (dates) => {
     // const threeMouthBefore = new Date().setMonth( new Date().getMonth() - 3 );
-    const threeMouthBefore = new Date().setDate( new Date().getDay() - 1 );
+    const threeMouthBefore = new Date().setHours( new Date().setHours() - 1 );
 
     return dates.reduce((isOutDated, date) => (
         isOutDated || Number(new Date(date)) < threeMouthBefore
@@ -74,8 +74,29 @@ class API {
                 console.log(JSON.stringify(branches, null, 2));
 
                 const body = {
-                    "text": "Hello, world."
+                    blocks: [
+                        {
+                            type: 'section',
+                            text: {
+                                type: 'mrkdwn',
+                                text: 'List of branch to delete',
+                            },
+                        },
+                    ],
                 };
+
+                branches.forEach((branch) => {
+                    // if (branch.isOutDated) {
+                    //
+                    // }
+                    body.blocks.push({
+                        type: 'section',
+                        text: {
+                            type: 'mrkdwn',
+                            text: `Branch ${branch.name} will be deleted in 3 days. ${branch.author.name} and ${branch.committer.name} update branch to avoid deletion`,
+                        },
+                    })
+                })
 
                 const http = new _http.HttpClient();
                 await http.post(process.env.SLACK_HOOK_URL, JSON.stringify(body));
