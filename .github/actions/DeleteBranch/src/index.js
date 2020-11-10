@@ -1,7 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const { WebClient } = require('@slack/web-api');
-// const _http = require('@actions/http-client');
 
 
 const checkIsOutDated = (dates) => {
@@ -74,12 +73,12 @@ class API {
         const web = new WebClient(token);
 
 
-        const result = await web.chat.postMessage({
-            text: 'Hello world!',
-            channel: '@U01BDK579QB',
-        });
-
-        console.log('--->>', result);
+        // const result = await web.chat.postMessage({
+        //     text: 'Hello world!',
+        //     channel: '@U01BDK579QB',
+        // });
+        //
+        // console.log('--->>', result);
 
         // const api = new API();
         //
