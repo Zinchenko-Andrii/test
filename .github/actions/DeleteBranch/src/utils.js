@@ -1,21 +1,40 @@
 
+const DELETE_DAY = 4;
+
+const threeMouthBefore = new Date(
+    new Date().setMonth(new Date().getMonth() - 3)
+);
+
+const getNextDayOfWeek = (date, dayOfWeek) => {
+    let resultDate = new Date(date.getTime());
+
+    resultDate.setDate(date.getDate() + ((7 + dayOfWeek - date.getDay()) % 7));
+
+    return resultDate;
+};
+
+const getUTCDate = (date) => {
+    return new Date(date.setHours(0, 0, 0, 0));
+};
+
 const checkIsOutDated = (dates) => {
-    // const threeMouthBefore = new Date().setMonth( new Date().getMonth() - 3 );
-    const threeMouthBefore = new Date().setHours( new Date().setHours() - 1 );
+    return dates.reduce(
+        (isOutDated, date) =>
+            isOutDated ||
+            getUTCDate(new Date(date), DELETE_DAY) <
+            getUTCDate(getNextDayOfWeek(threeMouthBefore, DELETE_DAY)),
+        false
+    );
+};
 
-    return dates.reduce((isOutDated, date) => (
-        isOutDated || Number(new Date(date)) < threeMouthBefore
-    ), false);
-}
-
-const createNotificationBody = (branches, date) => {
+const createNotificationBody = (branches) => {
     const body = {
         blocks: [
             {
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": `:fire: Next branches will be deleted on ${date} at 00:00 :fire:`,
+                    "text": `:fire: Next branches will be deleted on ${getNextDayOfWeek(new Date(), DELETE_DAY).toLocaleDateString()} at 00:00 :fire:`,
                     "emoji": true
                 }
             },
@@ -26,35 +45,34 @@ const createNotificationBody = (branches, date) => {
     };
 
     branches.forEach((branch) => {
-        // if (branch.isOutDated) {
-        //
-        // }
-        body.blocks.push(
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": `*\`${branch.name}\`*`
+        if (branch.isOutDated) {
+            body.blocks.push(
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": `*\`${branch.name}\`*`
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": `Created by \`${branch.author.name}\` (\`${branch.author.email}\`)`
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": `Last commited by \`${branch.committer.name}\` (\`${branch.committer.email}\`)`
+                    }
+                },
+                {
+                    "type": "divider"
                 }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": `Created by \`${branch.author.name}\` (\`${branch.author.email}\`)`
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": `Last commited by \`${branch.committer.name}\` (\`${branch.committer.email}\`)`
-                }
-            },
-            {
-                "type": "divider"
-            }
-        )
+            )
+        }
     })
 
     return body;

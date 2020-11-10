@@ -45,8 +45,10 @@ class API {
             const { name, commit: { commit: { author, committer}} } = data;
 
             let isOutDated = checkIsOutDated([author.date,committer.date]);
-
-            return ([ ...acc, { name, author, committer, isOutDated } ])
+            if (isOutDated) {
+                return ([ ...acc, { name, author, committer, isOutDated } ])
+            }
+            return acc;
         }, [])
     )
 
