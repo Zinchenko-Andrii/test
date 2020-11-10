@@ -2,6 +2,9 @@ name: DeleteBranch
 
 on:
   push:
+  schedule:
+    # will be 30 0 * * 1,4  ->  At 00:30 on Monday and Thursday.”
+    - cron: '30 0 * * 1,2,3,4,5'
 
 jobs:
   validate:
@@ -16,4 +19,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MYTOKEN }}
           SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL }}
-          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}

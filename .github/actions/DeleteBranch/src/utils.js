@@ -1,5 +1,6 @@
 
 const DELETE_DAY = 4;
+const NOTIFY_DAY = 1;
 
 const threeMouthBefore = new Date(
     new Date().setMonth(new Date().getMonth() - 3)
@@ -27,15 +28,19 @@ const checkIsOutDated = (dates) => {
     );
 };
 
-const createNotificationBody = (branches) => {
+const createNotificationBody = (branches, isDeleteNotification) => {
     const body = {
         blocks: [
             {
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": `:fire: Next branches will be deleted on ${getNextDayOfWeek(new Date(), DELETE_DAY).toLocaleDateString()} at 00:00 :fire:`,
-                    "emoji": true
+                    "emoji": true,
+                    "text": isDeleteNotification ? (
+                        `:fire: @here Next branches was deleted :fire:`
+                    ) : (
+                        `:fire: @here Next branches will be deleted on ${getNextDayOfWeek(new Date(), DELETE_DAY).toLocaleDateString()} at 00:00 :fire:`
+                    ),
                 }
             },
             {
@@ -80,5 +85,7 @@ const createNotificationBody = (branches) => {
 }
 
 
+module.exports.DELETE_DAY = DELETE_DAY;
+module.exports.NOTIFY_DAY = NOTIFY_DAY;
 module.exports.checkIsOutDated = checkIsOutDated;
 module.exports.createNotificationBody = createNotificationBody;
