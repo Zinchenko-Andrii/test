@@ -8,6 +8,7 @@ const { createNotificationBody } = require('./utils');
     try {
         const branches = await api.getBranches();
 
+        console.log(JSON.stringify(branches, null, 2))
         if (branches.length) {
             const http = new _http.HttpClient();
             await http.post(
