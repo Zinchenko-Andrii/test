@@ -73,10 +73,10 @@ class API {
         const web = new WebClient(token);
 
 
-        const result = await web.chat.postMessage({
-            text: 'Hello world!',
-            channel: 'U01BDK579QB',
-        });
+        const result = await web.users.lookupByEmail({
+            token,
+            email: 'zinchenko.andrii@airslate.com'
+        })
 
         console.log('--->>', result);
 
