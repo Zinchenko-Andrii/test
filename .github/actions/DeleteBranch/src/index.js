@@ -76,11 +76,15 @@ class API {
                 const body = {
                     blocks: [
                         {
-                            type: 'section',
-                            text: {
-                                type: 'mrkdwn',
-                                text: 'List of branch to delete',
-                            },
+                            "type": "header",
+                            "text": {
+                                "type": "plain_text",
+                                "text": ":fire: Next branches will be deleted on 28/12/12 at 00:00 :fire:",
+                                "emoji": true
+                            }
+                        },
+                        {
+                            "type": "divider"
                         },
                     ],
                 };
@@ -89,13 +93,32 @@ class API {
                     // if (branch.isOutDated) {
                     //
                     // }
-                    body.blocks.push({
-                        type: 'section',
-                        text: {
-                            type: 'mrkdwn',
-                            text: `Branch ${branch.name} will be deleted in 3 days. ${branch.author.name} and ${branch.committer.name} update branch to avoid deletion`,
+                    body.blocks.push(
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": `*\`${branch.name}\`*`
+                            }
                         },
-                    })
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": `Created by \`${branch.author.name}\` (\`${branch.author.email}\`)`
+                            }
+                        },
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": `Last commited by \`${branch.committer.name}\` (\`${branch.committer.email}\`)`
+                            }
+                        },
+                        {
+                            "type": "divider"
+                        }
+                    )
                 })
 
                 const http = new _http.HttpClient();
