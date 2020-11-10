@@ -23,7 +23,7 @@ const checkIsOutDated = (dates) => {
             isOutDated ||
             getUTCDate(new Date(date), DELETE_DAY) <
             getUTCDate(getNextDayOfWeek(threeMouthBefore, DELETE_DAY)),
-        false
+        true
     );
 };
 
