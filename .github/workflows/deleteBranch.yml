@@ -15,4 +15,4 @@ jobs:
         uses: ./.github/actions/DeleteBranch
         env:
           GITHUB_TOKEN: ${{ secrets.MYTOKEN }}
-          SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL_AS_FRONT }}
+          SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL }}

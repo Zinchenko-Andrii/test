@@ -1,5 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const _http = require('@actions/http-client');
+
 
 const checkIsOutDated = (dates) => {
     // const threeMouthBefore = new Date().setMonth( new Date().getMonth() - 3 );
@@ -68,8 +70,23 @@ class API {
     try {
         const api = new API();
 
-        api.getBranches().then((branches) => {
+        api.getBranches().then(async (branches) => {
                 console.log(JSON.stringify(branches, null, 2));
+
+                const body = {
+                    blocks: [
+                        {
+                            type: 'section',
+                            text: {
+                                type: 'mrkdwn',
+                                text: `test Message`,
+                            },
+                        },
+                    ],
+                };
+
+                const http = new _http.HttpClient();
+                await http.post(process.env.SLACK_HOOK_URL, JSON.stringify(body));
             })
 
     } catch (error) {
