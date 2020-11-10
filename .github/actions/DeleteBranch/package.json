@@ -10,8 +10,9 @@
     "url": "git+ssh://git@github.com/airslateinc/front-platform.git"
   },
   "dependencies": {
-    "@actions/core": "^1.2.4",
-    "@actions/github": "4.0.0",
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0",
+    "@actions/http-client": "^1.0.9",
     "@slack/web-api": "^5.13.0"
   }
 }
