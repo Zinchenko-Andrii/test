@@ -16,3 +16,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MYTOKEN }}
           SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL }}
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
