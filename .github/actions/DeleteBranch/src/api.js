@@ -11,6 +11,14 @@ class API {
         this.octokit = github.getOctokit(process.env.GITHUB_TOKEN);
     }
 
+    deleteBranchList = (list) => (
+        Promise.all(
+            list.reduce((acc, { name }) => (
+                [ ...acc, this.deleteBranch(name) ]
+            ), [])
+        )
+    )
+
     deleteBranch = (name) => (
         this.octokit.git.deleteRef({
             ...this.defaultCreds,

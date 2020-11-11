@@ -6,7 +6,7 @@ const { createNotificationBody, DELETE_DAY, NOTIFY_DAY } = require('./utils');
 
 (async () => {
     try {
-        const data = await api.deleteBranch('branch');
+        const data = await api.deleteBranchList(['test1', 'test2']);
         console.log(JSON.stringify(data));
         // const branches = await api.getBranches();
         //
