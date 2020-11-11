@@ -13,7 +13,7 @@ class API {
 
     deleteBranchList = (list) => (
         Promise.all(
-            list.reduce((acc, name) => (
+            list.reduce((acc, { name }) => (
                 [ ...acc, this.deleteBranch(name) ]
             ), [])
         )

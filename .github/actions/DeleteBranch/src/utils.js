@@ -1,5 +1,5 @@
 
-const DELETE_DAY = 4;
+const DELETE_DAY = 3;
 const NOTIFY_DAY = 1;
 
 const threeMouthBefore = new Date(
