@@ -2,4 +2,4 @@ name: 'DeleteBranch'
 description: 'Notify and Delete old branches'
 runs:
   using: 'node12'
-  main: 'src/index.js'
+  main: 'dist/commonjs/index.js'
