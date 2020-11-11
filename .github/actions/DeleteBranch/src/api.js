@@ -11,14 +11,12 @@ class API {
         this.octokit = github.getOctokit(process.env.GITHUB_TOKEN);
     }
 
-    deleteBranch(name) {
-        return (
-            this.octokit.git.deleteRef({
-                ...github.context.repo,
-                ref: `heads/${name}`
-            })
-        )
-    }
+    deleteBranch = (name) => (
+        this.octokit.git.deleteRef({
+            ...this.defaultCreds,
+            ref: `heads/${name}`
+        })
+    )
 
     getBranchList = () => {
         const params = { ...this.defaultCreds, protected: false };
