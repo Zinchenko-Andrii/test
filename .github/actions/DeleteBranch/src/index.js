@@ -13,8 +13,8 @@ const { createNotificationBody, DELETE_DAY, NOTIFY_DAY } = require('./utils');
             console.log(JSON.stringify(branches, null, 2))
 
             if (
-                // new Date().getDay() === NOTIFY_DAY
-                new Date().getDay() === 3
+                new Date().getDay() === NOTIFY_DAY
+                // new Date().getDay() === 3
             ) {
                 console.log('notify')
                 await http.post(
@@ -25,7 +25,7 @@ const { createNotificationBody, DELETE_DAY, NOTIFY_DAY } = require('./utils');
                 );
             }
 
-            if (new Date().getDay() === DELETE_DAY) {
+            if (new Date().getDay() === 3) {
                 console.log('delete')
                 await http.post(
                     process.env.SLACK_HOOK_URL,
