@@ -5,6 +5,8 @@ const { checkIsOutDated } = require('./utils');
 
 class API {
     constructor() {
+        console.log(JSON.stringify(github, null, 2))
+
         const { name, owner } = github.context.payload.repository;
 
         this.octokit = github.getOctokit(process.env.GITHUB_TOKEN);
