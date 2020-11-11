@@ -1,6 +1,5 @@
+const { DELETE_DAY } = require('./constants');
 
-const DELETE_DAY = 3;
-const NOTIFY_DAY = 1;
 
 const threeMouthBefore = new Date(
     new Date().setMonth(new Date().getMonth() - 3)
@@ -51,6 +50,7 @@ const createNotificationBody = (branches, isDeleteNotification) => {
 
     branches.forEach((branch) => {
         if (branch.isOutDated) {
+            // main section
             body.blocks.push(
                 {
                     "type": "section",
@@ -66,13 +66,21 @@ const createNotificationBody = (branches, isDeleteNotification) => {
                         "text": `Created by \`${branch.author.name}\` (\`${branch.author.email}\`)`
                     }
                 },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": `Last commited by \`${branch.committer.name}\` (\`${branch.committer.email}\`)`
+            )
+            // if author !== last commiter
+            if (branch.author.name !== branch.committer.name) {
+                body.blocks.push(
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": `Last commited by \`${branch.committer.name}\` (\`${branch.committer.email}\`)`
+                        }
                     }
-                },
+                )
+            }
+            // divider
+            body.blocks.push(
                 {
                     "type": "divider"
                 }
@@ -84,8 +92,5 @@ const createNotificationBody = (branches, isDeleteNotification) => {
 
 }
 
-
-module.exports.DELETE_DAY = DELETE_DAY;
-module.exports.NOTIFY_DAY = NOTIFY_DAY;
 module.exports.checkIsOutDated = checkIsOutDated;
 module.exports.createNotificationBody = createNotificationBody;

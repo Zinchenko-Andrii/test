@@ -11,21 +11,6 @@ class API {
         this.octokit = github.getOctokit(process.env.GITHUB_TOKEN);
     }
 
-    deleteBranchList = (list) => (
-        Promise.all(
-            list.reduce((acc, { name }) => (
-                [ ...acc, this.deleteBranch(name) ]
-            ), [])
-        )
-    )
-
-    deleteBranch = (name) => (
-        this.octokit.git.deleteRef({
-            ...this.defaultCreds,
-            ref: `heads/${name}`
-        })
-    )
-
     getBranchList = () => {
         const params = { ...this.defaultCreds, protected: false };
         return this.octokit.repos.listBranches(params).then(({ data }) => data);
@@ -62,6 +47,21 @@ class API {
         this.getBranchList()
             .then(this.getBranchesInfoList)
             .then(this.parseBranchesList)
+    )
+
+    deleteBranch = (name) => (
+        this.octokit.git.deleteRef({
+            ...this.defaultCreds,
+            ref: `heads/${name}`
+        })
+    )
+
+    deleteBranchList = (list) => (
+        Promise.all(
+            list.reduce((acc, { name }) => (
+                [ ...acc, this.deleteBranch(name) ]
+            ), [])
+        )
     )
 }
 

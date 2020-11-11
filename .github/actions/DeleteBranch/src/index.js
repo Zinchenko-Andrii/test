@@ -2,7 +2,8 @@ const core = require('@actions/core');
 const _http = require('@actions/http-client');
 
 const api = require('./api');
-const { createNotificationBody, DELETE_DAY, NOTIFY_DAY } = require('./utils');
+const { DELETE_DAY, NOTIFY_DAY } = require('./constants');
+const { createNotificationBody  } = require('./utils');
 
 (async () => {
     try {
@@ -14,7 +15,7 @@ const { createNotificationBody, DELETE_DAY, NOTIFY_DAY } = require('./utils');
 
             // on Notify_Day(Monday) - action will only notify about next deletion session
             if (new Date().getDay() === NOTIFY_DAY) {
-                console.log('notify')
+                console.log('---->>>   notify')
                 await http.post(
                     process.env.SLACK_HOOK_URL,
                     JSON.stringify(
@@ -25,7 +26,7 @@ const { createNotificationBody, DELETE_DAY, NOTIFY_DAY } = require('./utils');
 
             // on Delete_Day(Thursday) - action will delete all deprecated branch and notify about it.
             if (new Date().getDay() === DELETE_DAY) {
-                console.log('delete')
+                console.log('---->>>   deletion')
                 await http.post(
                     process.env.SLACK_HOOK_URL,
                     JSON.stringify(
@@ -34,10 +35,9 @@ const { createNotificationBody, DELETE_DAY, NOTIFY_DAY } = require('./utils');
                 );
                 await api.deleteBranchList(branches);
             }
-
-
+        } else {
+            console.log('---->>>   nothing to do')
         }
-
     } catch (error) {
         core.setFailed(error.message);
     }
