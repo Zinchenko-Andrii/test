@@ -5,13 +5,10 @@ const { checkIsOutDated } = require('./utils');
 
 class API {
     constructor() {
+        const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
+
+        this.defaultCreds = { owner, repo };
         this.octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-
-        console.log(JSON.stringify(process.env, null, 2))
-
-        const { name, owner } = github.context.payload.repository;
-
-        this.defaultCreds = { owner: owner.name, repo: name };
     }
 
     deleteBranch(name) {
