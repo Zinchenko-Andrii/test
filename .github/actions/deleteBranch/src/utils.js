@@ -31,14 +31,21 @@ const createNotificationBody = (branches, isDeleteNotification) => {
     const body = {
         blocks: [
             {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": '@channel'
+                }
+            },
+            {
                 "type": "header",
                 "text": {
                     "type": "plain_text",
                     "emoji": true,
                     "text": isDeleteNotification ? (
-                        `:fire: @here Next branches was deleted :fire:`
+                        `:fire: Next branches was deleted :fire:`
                     ) : (
-                        `:fire: @here Next branches will be deleted on ${getNextDayOfWeek(new Date(), DELETE_DAY).toLocaleDateString()} at 00:00 :fire:`
+                        `:fire: Next branches will be deleted on ${getNextDayOfWeek(new Date(), DELETE_DAY).toLocaleDateString()} at 00:00 :fire:`
                     ),
                 }
             },
