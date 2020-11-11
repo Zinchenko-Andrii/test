@@ -1,0 +1,21 @@
+name: DeleteBranch
+
+on:
+  push:
+  schedule:
+    # will be 30 0 * * 1,4  ->  At 00:30 on Monday and Thursday.”
+    - cron: '*/3 * * * *' # -> every 3 minus (every 10 in fact)
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: 'Runner'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: console log the github context
+        uses: ./.github/actions/deleteBranch
+        env:
+          GITHUB_TOKEN: ${{ secrets.MYTOKEN }}
+          SLACK_HOOK_URL: ${{ secrets.SLACK_HOOK_URL }}
