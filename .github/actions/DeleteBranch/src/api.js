@@ -7,8 +7,7 @@ class API {
     constructor() {
         this.octokit = github.getOctokit(process.env.GITHUB_TOKEN);
 
-        console.log(JSON.stringify(github, null, 2))
-        console.log(JSON.stringify(this.octokit, null, 2))
+        console.log(JSON.stringify(process.env, null, 2))
 
         const { name, owner } = github.context.payload.repository;
 
