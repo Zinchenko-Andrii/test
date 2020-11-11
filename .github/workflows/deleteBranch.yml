@@ -4,7 +4,8 @@ on:
   push:
   schedule:
     # will be 30 0 * * 1,4  ->  At 00:30 on Monday and Thursday.”
-    - cron: '30 0 * * 1,2,3,4,5'
+    # - cron: '30 0 * * 1,2,3,4,5'
+    - cron: '* * * * *'
 
 jobs:
   validate:
