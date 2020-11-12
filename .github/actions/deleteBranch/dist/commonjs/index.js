@@ -6297,7 +6297,7 @@ var github_2 = github.context;
 // 6 - Saturday
 
 const NOTIFY_DAY = 1;
-const DELETE_DAY = 3;
+const DELETE_DAY = 4;
 
 var DELETE_DAY_1 = DELETE_DAY;
 var NOTIFY_DAY_1 = NOTIFY_DAY;
@@ -6309,96 +6309,70 @@ var constants = {
 
 const { DELETE_DAY: DELETE_DAY$1 } = constants;
 
-
 const threeMouthBefore = new Date(
-    new Date().setMonth(new Date().getMonth() - 3)
+  new Date().setMonth(new Date().getMonth() - 3),
 );
 
 const getNextDayOfWeek = (date, dayOfWeek) => {
-    let resultDate = new Date(date.getTime());
+  const resultDate = new Date(date.getTime());
 
-    resultDate.setDate(date.getDate() + ((7 + dayOfWeek - date.getDay()) % 7));
+  resultDate.setDate(date.getDate() + ((7 + dayOfWeek - date.getDay()) % 7));
 
-    return resultDate;
+  return resultDate;
 };
 
-const getUTCDate = (date) => {
-    return new Date(date.setHours(0, 0, 0, 0));
-};
+const getUTCDate = (date) => new Date(date.setHours(0, 0, 0, 0));
 
-const checkIsOutDated = (dates) => {
-    return dates.reduce(
-        (isOutDated, date) =>
-            isOutDated ||
-            getUTCDate(new Date(date)) <
-            getUTCDate(getNextDayOfWeek(threeMouthBefore, DELETE_DAY$1)),
-        true
-    );
-};
+const checkIsOutDated = (dates) => dates.reduce(
+  (isOutDated, date) =>
+    isOutDated
+            || getUTCDate(new Date(date))
+            < getUTCDate(getNextDayOfWeek(threeMouthBefore, DELETE_DAY$1)),
+  true,
+);
 
 const createNotificationBody = (branches, isDeleteNotification) => {
-    const body = {
-        blocks: [
-            {
-                "type": "header",
-                "text": {
-                    "type": "plain_text",
-                    "emoji": true,
-                    "text": isDeleteNotification ? (
-                        `:fire: @here Next branches was deleted :fire:`
-                    ) : (
-                        `:fire: @here Next branches will be deleted on ${getNextDayOfWeek(new Date(), DELETE_DAY$1).toLocaleDateString()} at 00:00 :fire:`
-                    ),
-                }
-            },
-            {
-                "type": "divider"
-            },
-        ],
-    };
+  const body = {
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: 'channel',
+          // text: '@channel',
+        },
+      },
+      {
+        type: 'header',
+        text: {
+          type: 'plain_text',
+          emoji: true,
+          text: isDeleteNotification ? (
+            ':fire: @here Next branches was deleted :fire:'
+          ) : (
+            `:fire: @here Next branches will be deleted on ${getNextDayOfWeek(new Date(), DELETE_DAY$1).toLocaleDateString()} at 00:00 :fire:`
+          ),
+        },
+      },
+      {
+        type: 'divider',
+      },
+    ],
+  };
 
-    branches.forEach((branch) => {
-        if (branch.isOutDated) {
-            // main section
-            body.blocks.push(
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": `*\`${branch.name}\`*`
-                    }
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": `Created by \`${branch.author.name}\` (\`${branch.author.email}\`)`
-                    }
-                },
-            );
-            // if author !== last commiter
-            if (branch.author.name !== branch.committer.name) {
-                body.blocks.push(
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": `Last commited by \`${branch.committer.name}\` (\`${branch.committer.email}\`)`
-                        }
-                    }
-                );
-            }
-            // divider
-            body.blocks.push(
-                {
-                    "type": "divider"
-                }
-            );
-        }
-    });
+  body.blocks.push(
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: branches.reduce((text, branch) => (
+          `- *\`${branch.name}\`* - Created by \`${branch.author.name}\` (\`${branch.author.email}\`)\n`
+        ), ''),
+      },
+    },
+  );
 
-    return body;
-
+  return body;
 };
 
 var checkIsOutDated_1 = checkIsOutDated;
@@ -6436,9 +6410,9 @@ class API {
   getBranchesInfoList(list) {
     return (
       Promise.all(
-        list.reduce((acc, { name }) => (
+        list.map((acc, { name }) => (
           [...acc, this.getBranchInfo(name)]
-        ), []),
+        )),
       )
     );
   }
@@ -6478,9 +6452,9 @@ class API {
   deleteBranchList(list) {
     return (
       Promise.all(
-        list.reduce((acc, { name }) => (
+        list.map((acc, { name }) => (
           [...acc, this.deleteBranch(name)]
-        ), []),
+        )),
       )
     );
   }
@@ -6514,14 +6488,14 @@ const { createNotificationBody: createNotificationBody$1 } = utils$3;
 
       // on Delete_Day(Thursday) - action will delete all deprecated branch and notify about it.
       if (new Date().getDay() === DELETE_DAY$2) {
-        console.log('---->>>   deletion');
+        console.log('---->>>   deletion', process.env.SLACK_HOOK_URL.length);
         await http.post(
           process.env.SLACK_HOOK_URL,
           JSON.stringify(
             createNotificationBody$1(branches, true),
           ),
         );
-        await api_1.deleteBranchList(branches);
+        // await api.deleteBranchList(branches);
       }
     } else {
       console.log('---->>>   nothing to do');
