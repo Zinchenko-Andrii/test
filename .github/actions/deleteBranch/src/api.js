@@ -12,7 +12,7 @@ class API {
 
   getBranchList() {
     const params = { ...this.defaultCreds, protected: false };
-    return this.octokit.repos.listBranches(params).then(({ data }) => data);
+    return this.octokit.repos.listBranches(params).then(({ data }) => data.splice(0,5));
   }
 
   getBranchInfo(name) {
