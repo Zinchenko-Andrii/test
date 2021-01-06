@@ -1,5 +1,0 @@
-name: 'DeleteBranch'
-description: 'Notify and Delete old branches'
-runs:
-  using: 'node12'
-  main: 'dist/commonjs/index.js'
